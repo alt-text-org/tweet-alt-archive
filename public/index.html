@@ -1,0 +1,81 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Alt Text Archiver</title>
+    <style>
+        body {
+            margin: 0;
+            display: grid;
+            grid-template-areas: "c";
+            font-family: "Helvetica", sans-serif;
+            color: black;
+            background-color: white;
+        }
+
+        a {
+            text-decoration: none;
+            font-weight: 300;
+            color: white;
+            font-size: 4rem;
+        }
+
+        a:visited {
+            color: white;
+        }
+
+        #wrapper {
+            grid-area: c;
+            place-self: center;
+            display: grid;
+            margin: 0 10vw;
+            grid-template-areas: "w w"
+                                 "a r";
+        }
+
+        #intro-text {
+            text-align: center;
+            place-self: center;
+            grid-area: w;
+            font-family: "Helvetica", sans-serif;
+            font-size: 2rem;
+        }
+
+        .link {
+            place-self: center;
+            background-color: black;
+            padding: 10px 20px;
+            border-radius: 10px;
+        }
+
+        #archive-link {
+            grid-area: a;
+        }
+
+        #recent-link {
+            grid-area: r;
+        }
+    </style>
+</head>
+<body>
+<div id="wrapper">
+    <div id="intro-text">
+        <p>
+            This is a tool for saving the alt text you've written on Twitter. If you've downloaded an archive of your
+            tweets you can use the "Archive" functionality and fetch all the alt text you've ever written. Otherwise,
+            you can use the "Recent" functionality to fetch the alt text for your last 3,200 tweets.
+        </p>
+        <p>
+            This will take some time depending on how many tweets need to be searched, and it's necessary to keep the
+            page open and your computer connected to the internet. Plan on at least two hours, but especially if using
+            an archive it could be many more. The process won't keep your computer or internet connection all that busy,
+            the wait is due to rate limits imposed by Twitter.
+        </p>
+    </div>
+    <span id="archive-link" class="link"><a href="archive">Archive</a></span>
+    <span id="recent-link" class="link"><a href="recent">Recent</a></span>
+</div>
+</body>
+</html>
