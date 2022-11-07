@@ -14,8 +14,8 @@ fastify.register(require('@fastify/static'), {
 
 const config = {
     twitter: {
-        client_id: process.env.CLIENT_ID,
-        client_secret: process.env.CLIENT_SECRET
+        client_id: process.env.TWITTER_CLIENT_ID,
+        client_secret: process.env.TWITTER_CLIENT_SECRET
     }
 }
 const twtr = new auth.OAuth2User({
