@@ -9,19 +9,20 @@ body {
 
 a {
     text-decoration: none;
-    font-weight: 300;
+    font-weight: 900;
 }
 
 a:visited {
-    color: white;
+    color: gray;
 }
 
 #header {
     position: absolute;
     left: 0;
     top: 0;
-    width: 100vw;
+    width: 95vw;
     height: 2rem;
-    padding: 10px;
+    padding: 10px 40px;
     text-align: right;
+    color: gray;
 }

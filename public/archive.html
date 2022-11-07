@@ -3,10 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>Alt Text Archiver</title>
-    <style>
-
-    </style>
-    <link rel="stylesheet" type="text/css" href="common.css">
     <script src="src/jszip.min.js"></script>
     <script>
         function extractTweetId(tweetWrapper) {
@@ -104,26 +100,67 @@
                 console.log("No file found!");
             }
         }
-
     </script>
+    <link rel="stylesheet" type="text/css" href="common.css">
+    <style>
+        #wrapper {
+            grid-area: c;
+            place-self: center;
+            margin: 20vh 20vw 0;
+        }
+
+        #explanation {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 500;
+        }
+
+        #upload-wrapper {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 900;
+        }
+
+        #file-upload {
+            font-size: 2rem;
+            font-weight: 600;
+            border: 2px solid black;
+            border-radius: 10px;
+        }
+
+        .button {
+            background-color: black;
+            padding: 10px 20px;
+            border-radius: 10px;
+            color: white;
+            font-size: 2rem;
+            margin-top: 15px;
+            font-weight: 600;
+        }
+
+        .button:disabled {
+            background-color: gray;
+        }
+    </style>
 </head>
 <body>
 <div id="header">
-    <a href="https://hbeck.dev">💜 HBeck</a>
+    <a href="https://hbeck.dev" target="_blank" >💜 HBeck</a>
 </div>
 <div id="wrapper">
     <div id="explanation">
         Select the zip file containing your archive. Pressing "Gather Alt Text" will kick off a process on the backend,
         no need to stay connected while it runs. You'll be sent to a page that will update when your alt text is ready.
-        <br/>
+        <br/><br/>
         Keep in mind that this is going to generate a file that's not really intended for human consumption, future work
         will hopefully allow integration of the result with your archive.
     </div>
+    <br/>
     <div id="upload-wrapper">
         <form>
-            <label for="file-upload">Archive</label><br/>
+            <label for="file-upload">Archive:&nbsp;</label>
             <input type="file" id="file-upload" name="file-upload" accept="application/zip" onchange="fileSelected()"><br/>
-            <button id="submit-button" type="button" onclick="submitArchive()" disabled>Gather Alt Text</button>
+            <button id="submit-button" class="button" type="button" onclick="submitArchive()" disabled>Gather Alt Text</button>
         </form>
     </div>
 </div>
