@@ -1,4 +1,5 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
@@ -6,33 +7,13 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Alt Text Archiver</title>
     <style>
-        body {
-            margin: 0;
-            display: grid;
-            grid-template-areas: "c";
-            font-family: "Helvetica", sans-serif;
-            color: black;
-            background-color: white;
-        }
-
-        a {
-            text-decoration: none;
-            font-weight: 300;
-            color: white;
-            font-size: 4rem;
-        }
-
-        a:visited {
-            color: white;
-        }
-
         #wrapper {
             grid-area: c;
             place-self: center;
             display: grid;
             margin: 0 10vw;
-            grid-template-areas: "w w"
-                                 "a r";
+            grid-template-areas: "w"
+                                 "a";
         }
 
         #intro-text {
@@ -52,30 +33,31 @@
 
         #archive-link {
             grid-area: a;
-        }
-
-        #recent-link {
-            grid-area: r;
+            color: white;
+            font-size: 4rem;
         }
     </style>
+    <link rel="stylesheet" type="text/css" href="common.css">
 </head>
 <body>
+<div id="header">
+    <a href="https://hbeck.dev">💜 HBeck</a>
+</div>
 <div id="wrapper">
     <div id="intro-text">
         <p>
-            This is a tool for saving the alt text you've written on Twitter. If you've downloaded an archive of your
-            tweets you can use the "Archive" functionality and fetch all the alt text you've ever written. Otherwise,
-            you can use the "Recent" functionality to fetch the alt text for your last 3,200 tweets.
+            This is a tool for saving the alt text you've written on Twitter. You'll need an archive of your tweets,
+            read <b><a href="https://help.twitter.com/en/managing-your-account/how-to-download-your-twitter-archive">
+            This Guide</a></b> for how to get one if you haven't yet. Be aware that it can take a day
+            for it to be available for download. Don't worry, this tool will still be here.
         </p>
         <p>
-            This will take some time depending on how many tweets need to be searched, and it's necessary to keep the
-            page open and your computer connected to the internet. Plan on at least two hours, but especially if using
-            an archive it could be many more. The process won't keep your computer or internet connection all that busy,
-            the wait is due to rate limits imposed by Twitter.
+            First you'll need to agree to let this site read your tweets, then upload your archive. Don't worry, your
+            whole archive won't be sent to us, just the tweet identifiers for your tweets with images. It could take
+            some time to prepare your alt text, so
         </p>
     </div>
-    <span id="archive-link" class="link"><a href="archive">Archive</a></span>
-    <span id="recent-link" class="link"><a href="recent">Recent</a></span>
+    <span id="archive-link" class="link"><a href="auth">Get Started</a></span>
 </div>
 </body>
 </html>

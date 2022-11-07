@@ -1,12 +1,131 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Alt Text Archiver</title>
+    <style>
+
+    </style>
+    <link rel="stylesheet" type="text/css" href="common.css">
+    <script src="src/jszip.min.js"></script>
+    <script>
+        function extractTweetId(tweetWrapper) {
+            if (tweetWrapper.tweet && tweetWrapper.tweet.extended_entities && tweetWrapper.tweet.extended_entities.media) {
+                const hasMedia = tweetWrapper.tweet.extended_entities.media
+                    .reduce((prev, cur) => prev || cur.type === "photo" || cur.type === "animated_gif", false);
+                if (hasMedia) {
+                    return tweetWrapper.tweet.id;
+                } else {
+                    return null;
+                }
+            } else {
+                return null;
+            }
+        }
+
+        function handleFile(fileContents) {
+            const [_, json] = fileContents.split("=", 2);
+            if (!json) {
+                throw new Error(`Failed to load contents for tweets.js`)
+            }
+
+            const parsed = JSON.parse(json);
+            if (!parsed) {
+                throw new Error(`Failed to parse contents for tweets.js`)
+            }
+
+            const tweetIds = []
+            parsed.forEach(tweet => {
+                const tweetId = extractTweetId(tweet);
+                if (tweetId) {
+                    tweetIds.push(tweetId)
+                }
+            })
+
+            return tweetIds;
+        }
+
+        async function handleZip(zip) {
+            const promises = []
+            zip.folder("tweets").forEach(file => {
+                promises.push(file.async("string").then(str => handleFile(str)))
+            })
+
+            return (await Promise.all(promises)).flatMap(a => a)
+        }
+
+        async function extractTweetIds(file) {
+            return JSZip.loadAsync(file)
+                .then(handleZip)
+                .catch(err => {
+                    console.log(err);
+                    return null;
+                })
+        }
+
+        function fileSelected() {
+            const submitButton = document.getElementById("submit-button")
+            submitButton.disabled = false;
+        }
+
+        async function submitArchive() {
+            const query = new URLSearchParams(window.location.search);
+            const code = query.get('code');
+
+            const filePicker = document.getElementById("file-upload");
+            if (filePicker.files && filePicker.files[0]) {
+                const tweetIds = await extractTweetIds(filePicker.files[0])
+                if (!tweetIds) {
+                    alert("Failed to extract tweet ids. Check console logs for error and reach out to @HBeckPDX.")
+                } else if (tweetIds.length === 0) {
+                    alert("No tweets with images found")
+                } else {
+                    fetch("/api/upload", {
+                        method: "POST",
+                        body: JSON.stringify({
+                            code,
+                            tweet_ids: tweetIds
+                        })
+                    }).then(async resp => {
+                        if (resp.ok) {
+                            const {uuid} = await resp.json();
+                            if (!uuid) {
+                                alert("Malformed response from server, please alert @HBeckPDX");
+                            }
+
+                            window.location.query=`uuid=${uuid}`;
+                            window.location.pathname="/download";
+                        } else {
+                            alert(`Upload failed with status: ${resp.statusCode}, please alert @HBeckPDX`)
+                        }
+                    })
+                }
+            } else {
+                console.log("No file found!");
+            }
+        }
+
+    </script>
 </head>
 <body>
-
+<div id="header">
+    <a href="https://hbeck.dev">💜 HBeck</a>
+</div>
+<div id="wrapper">
+    <div id="explanation">
+        Select the zip file containing your archive. Pressing "Gather Alt Text" will kick off a process on the backend,
+        no need to stay connected while it runs. You'll be sent to a page that will update when your alt text is ready.
+        <br/>
+        Keep in mind that this is going to generate a file that's not really intended for human consumption, future work
+        will hopefully allow integration of the result with your archive.
+    </div>
+    <div id="upload-wrapper">
+        <form>
+            <label for="file-upload">Archive</label><br/>
+            <input type="file" id="file-upload" name="file-upload" accept="application/zip" onchange="fileSelected()"><br/>
+            <button id="submit-button" type="button" onclick="submitArchive()" disabled>Gather Alt Text</button>
+        </form>
+    </div>
+</div>
 </body>
 </html>

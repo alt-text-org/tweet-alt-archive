@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Alt Text Archiver</title>
+    <style>
+        #wait-wrapper {
+            margin: 40vh 30vw 0;
+            grid-area: c;
+            place-self: center;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        #download-wrapper {
+            display: none;
+            grid-area: c;
+            place-self: center;
+            text-align: center;
+            font-weight: 900;
+        }
+
+        #error-wrapper {
+            display: none;
+            grid-area: c;
+            place-self: center;
+            text-align: center;
+            font-weight: 600;
+        }
+    </style>
+    <link rel="stylesheet" type="text/css" href="common.css">
+    <script>
+        const query = new URLSearchParams(window.location.search);
+        const uuid = query.get('uuid');
+
+        const waitWrapper = document.getElementById("wait-wrapper");
+        const downloadWrapper = document.getElementById("download-wrapper");
+        const errorWrapper = document.getElementById("error-wrapper");
+
+        let pollHandle = null
+        const poll = (uuid) => {
+            return () => {
+                let resultUrl = `https://download.alt-text.org/${uuid}/result.json`;
+                fetch(resultUrl, {
+                    method: "HEAD"
+                }).then(async resp => {
+                    if (resp.ok) {
+                        downloadWrapper.innerHTML = `Your archive is ready!<br>Download it <i><b><a href="${resultUrl}">Here</a></b></i>`;
+                        waitWrapper.style.display = "none";
+                        downloadWrapper.style.display = "block";
+                        clearInterval(pollHandle);
+                    } else {
+                        let errorResp = await fetch(`https://download.alt-text.org/${uuid}/error.json`)
+                        if (errorResp.ok) {
+                            let error = await errorResp.json()
+                            errorWrapper.innerText = `Archive operation failed, please try again\nError: ${error.error}`;
+                            waitWrapper.style.display = "none";
+                            errorWrapper.style.display = "block";
+                            clearInterval(pollHandle);
+                        }
+                    }
+                }).catch(err => console.log(err))
+            }
+        }
+
+        if (uuid) {
+            pollHandle = setInterval(poll(uuid), 10000);
+        } else {
+            errorWrapper.innerText =
+                "Hmm, you're missing a query parameter. Unfortunately without them there's not much to be done.";
+            waitWrapper.style.display = "none";
+            errorWrapper.style.display = "block";
+        }
+    </script>
+</head>
+<body>
+<div id="header">
+    <a href="https://hbeck.dev">💜 HBeck</a>
+</div>
+<div id="wait-wrapper">
+    Your alt text is being collected. You don't have to stay on this page, but be sure to save the address. When your
+    archive is collected, this page will present a link to download it. If the archiver fails for some reason, it should
+    let you know here. Be aware that this process may take several hours to complete.
+</div>
+<div id="download-wrapper"></div>
+<div id="error-wrapper"></div>
+</body>
+</html>

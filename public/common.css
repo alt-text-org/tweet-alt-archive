@@ -1,0 +1,27 @@
+body {
+    margin: 0;
+    display: grid;
+    grid-template-areas: "c";
+    font-family: "Helvetica", sans-serif;
+    color: black;
+    background-color: white;
+}
+
+a {
+    text-decoration: none;
+    font-weight: 300;
+}
+
+a:visited {
+    color: white;
+}
+
+#header {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 2rem;
+    padding: 10px;
+    text-align: right;
+}
