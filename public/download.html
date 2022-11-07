@@ -40,17 +40,19 @@
         let pollHandle = null
         const poll = (uuid) => {
             return () => {
-                let resultUrl = `https://download.alt-text.org/${uuid}/result.json`;
+                let resultUrl = `https://download.alt-text.org/archive/${uuid}/result.json`;
                 fetch(resultUrl, {
                     method: "HEAD"
                 }).then(async resp => {
                     if (resp.ok) {
-                        downloadWrapper.innerHTML = `Your archive is ready!<br>Download it <i><b><a href="${resultUrl}">Here</a></b></i>`;
+                        downloadWrapper.innerHTML =
+                            `Your archive is ready!<br>Download it <i><b><a href="${resultUrl}">Here</a></b></i><br/>` +
+                        `This project costs a bit to run. If you're able, your support on <a href="https://ko-fi.com/hbeck">Ko-fi</a> is so appreciated`;
                         waitWrapper.style.display = "none";
                         downloadWrapper.style.display = "block";
                         clearInterval(pollHandle);
                     } else {
-                        let errorResp = await fetch(`https://download.alt-text.org/${uuid}/error.json`)
+                        let errorResp = await fetch(`https://download.alt-text.org/archive/${uuid}/error.json`)
                         if (errorResp.ok) {
                             let error = await errorResp.json()
                             errorWrapper.innerText = `Archive operation failed, please try again\nError: ${error.error}`;
@@ -75,7 +77,7 @@
 </head>
 <body>
 <div id="header">
-    <a href="https://hbeck.dev" target="_blank" >💜 HBeck</a>
+    <a href="https://hbeck.dev" target="_blank">💜 HBeck</a>
 </div>
 <div id="wait-wrapper">
     Your alt text is being collected. You don't have to stay on this page, but be sure to save the address. When your

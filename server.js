@@ -59,14 +59,10 @@ const signupOpts = {
             state: state, code_challenge_method: "plain", code_challenge: crypto.randomBytes(64).toString("base64"),
         });
 
-        const body = {
-            auth_url: authUrl,
-        };
-
-        reply.status(200).send(JSON.stringify(body));
+        reply.redirect(authUrl)
     },
 };
-fastify.get("/api/get-auth-url", signupOpts);
+fastify.get("/auth", signupOpts);
 
 const signupCallbackOpts = {
     schema: {

@@ -36,7 +36,7 @@ async function task(config, uuid, code, tweetFile) {
         }
     }
 
-    saveToGcs(`/${uuid}/result.json`, alt);
+    saveToGcs(`/archive/${uuid}/result.json`, alt);
 }
 
 async function getTweets(twtr, tweetIds) {
@@ -130,5 +130,5 @@ async function makeTwitterClient(config, code) {
 }
 
 async function error(msg, uuid) {
-    saveToGcs(`/${uuid}/error.json`, msg)
+    saveToGcs(`/archive/${uuid}/error.json`, msg)
 }
