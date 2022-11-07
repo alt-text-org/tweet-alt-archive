@@ -37,6 +37,10 @@ fastify.get("/download", function (request, reply) {
     reply.sendFile("download.html")
 });
 
+fastify.get("/health", function (request, reply) {
+    reply.status(200).send()
+});
+
 const twitterStates = {};
 const MAX_STATE_LIFETIME_MILLIS = 5 * 60 * 1000;
 
