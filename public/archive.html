@@ -77,7 +77,10 @@
                         body: JSON.stringify({
                             code,
                             tweet_ids: tweetIds
-                        })
+                        }),
+                        headers: {
+                            "Content-Type": "application/json"
+                        }
                     }).then(async resp => {
                         if (resp.ok) {
                             const {uuid} = await resp.json();
