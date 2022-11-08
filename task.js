@@ -10,10 +10,6 @@ console.log(`Got task with UUID: '${uuid}'`)
 
 const config = {
     gcs_token: process.env.GCS_TOKEN,
-    twitter: {
-        client_id: process.env.TWITTER_CLIENT_ID,
-        client_secret: process.env.TWITTER_CLIENT_SECRET
-    }
 }
 
 if (uuid) {
@@ -27,10 +23,7 @@ if (uuid) {
 
     let taskFile = `./in-progress/${uuid}.json`;
     let taskDef = JSON.parse(fs.readFileSync(taskFile, "utf8"))
-    console.log(taskDef)
-    console.log(`Launching with code '${taskDef.code}' for ${taskDef.tweet_ids.length} tweets`)
-
-    task(config, uuid, taskDef.code, taskDef.tweet_ids)
+    task(config, uuid, taskDef.token, taskDef.tweet_ids)
         .then(() => {
             fs.rmSync(taskFile)
         })
@@ -42,8 +35,8 @@ if (uuid) {
     error("Internal error, task was not invoked correctly", uuid).catch()
 }
 
-async function task(config, uuid, code, tweets) {
-    const twtr = await makeTwitterClient(config, code);
+async function task(config, uuid, token, tweets) {
+    const twtr = await makeTwitterClient(config, token);
 
     const alt = [];
     for (let i = 0; i < tweets.length; i += 100) {
@@ -129,20 +122,8 @@ function saveToGcs(path, contents) {
     });
 }
 
-async function makeTwitterClient(config, code) {
-    const myClient = new auth.OAuth2User({
-        client_id: config.twitter.client_id,
-        client_secret: config.twitter.client_secret,
-        callback: "https://archive.alt-text.org/callback",
-        scopes: ["tweet.read", "users.read"],
-    });
-
-    const tokenWrapper = await myClient.requestAccessToken(code);
-    if (tokenWrapper && tokenWrapper.token && tokenWrapper.token.access_token) {
-        return new Client(new auth.OAuth2Bearer(tokenWrapper.token.access_token))
-    } else {
-        throw new Error("Couldn't get Twitter client")
-    }
+async function makeTwitterClient(token) {
+    return new Client(new auth.OAuth2Bearer(token))
 }
 
 async function error(msg, uuid) {

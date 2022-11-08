@@ -141,9 +141,18 @@ const uploadOpts = {
 
         const uuid = v4();
 
+        const tokenWrapper = await twtr.requestAccessToken(code);
+        let token = null;
+        if (tokenWrapper && tokenWrapper.token && tokenWrapper.token.access_token) {
+            token = tokenWrapper.token.access_token
+        } else {
+            reply.status(500).send({error: "Couldn't get token from Twitter"})
+            return
+        }
+
         let file = `./in-progress/${uuid}.json`;
         fs.writeFileSync(file, JSON.stringify({
-            code,
+            token,
             tweet_ids
         }));
 
