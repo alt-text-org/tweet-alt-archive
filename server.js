@@ -26,6 +26,15 @@ const twtr = new auth.OAuth2User({
     scopes: ["tweet.read", "users.read"],
 });
 
+fastify.get("/common.css", function (request, reply) {
+    reply.sendFile("common.css")
+})
+
+fastify.get("/src/jszip.min.js", function (request, reply) {
+    reply.sendFile("src/jszip.min.js")
+})
+
+
 fastify.get("/", function (request, reply) {
     reply.sendFile("index.html")
 });
