@@ -128,7 +128,6 @@ const uploadOpts = {
         },
     },
     handler: async (request, reply) => {
-        console.log(request.body);
         const {tweet_ids, code} = request.body;
         if (!code) {
             reply.status(400).send({error: "Missing twitter code"})
