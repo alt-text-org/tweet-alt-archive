@@ -103,7 +103,7 @@ const signupCallbackOpts = {
 
         delete twitterStates[state];
 
-        reply.redirect(307, `/archive?code-${code}`);
+        reply.redirect(307, `/archive?code=${code}`);
     }
 };
 fastify.get("/callback", signupCallbackOpts);
