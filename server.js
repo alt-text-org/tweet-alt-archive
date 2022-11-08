@@ -129,11 +129,25 @@ const uploadOpts = {
     },
     handler: async (request, reply) => {
         const {tweet_ids, code} = request.body;
+        if (!code) {
+            reply.status(400).send({error: "Missing twitter code"})
+            return
+        }
+
+        if (!tweet_ids || tweet_ids.length === 0) {
+            reply.status(400).send({error: "No tweet ids specified"})
+            return
+        }
+
         const uuid = v4();
 
-        let file = `/in-progress/${uuid}.json`;
-        fs.writeFileSync(file, tweet_ids);
-        const child = child_process.spawn(`node task.js ${uuid} ${code} ${file}`);
+        let file = `./in-progress/${uuid}.json`;
+        fs.writeFileSync(file, JSON.stringify({
+            code,
+            tweet_ids
+        }));
+
+        const child = child_process.spawn(`node task.js ${uuid}`);
         child.stdout.on("data", data => {
             console.log(`${uuid}: ${data}`);
         });

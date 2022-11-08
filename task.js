@@ -2,9 +2,10 @@ const fs = require("fs");
 const {Client, auth} = require("twitter-api-sdk");
 const {Storage} = require("@google-cloud/storage");
 const stream = require('stream');
+const {parse} = require("uuid")
 
 const args = process.argv.slice(2);
-const [uuid, code, tweetFile] = args
+const [uuid] = args
 
 const config = {
     gcs_token: process.env.GCS_TOKEN,
@@ -14,8 +15,22 @@ const config = {
     }
 }
 
-if (tweetFile) {
-    task(config, uuid, code, tweetFile)
+if (uuid) {
+    try {
+        parse(uuid)
+    } catch (err) {
+        console.log(`Couldn't parse UUID: '${uuid}'`)
+        console.log(err);
+        return
+    }
+
+    let taskFile = `./in-progress/${uuid}.json`;
+    let taskDef = fs.readFileSync(taskFile).toJSON();
+
+    task(config, uuid, taskDef.code, taskDef.tweet_ids)
+        .then(() => {
+            fs.rmSync(taskFile)
+        })
         .catch(async err => {
             console.log(err)
             await error(`Task failed: ${err}`, uuid)
@@ -24,9 +39,8 @@ if (tweetFile) {
     error("Internal error, task was not invoked correctly", uuid).catch()
 }
 
-async function task(config, uuid, code, tweetFile) {
-    const twtr = await makeTwitterClient(config);
-    const tweets = fs.readFileSync(tweetFile).toJSON();
+async function task(config, uuid, code, tweets) {
+    const twtr = await makeTwitterClient(config, code);
 
     const alt = [];
     for (let i = 0; i < tweets.length; i += 100) {
@@ -118,7 +132,7 @@ async function makeTwitterClient(config, code) {
         client_id: config.twitter.client_id,
         client_secret: config.twitter.client_secret,
         callback: "https://archive.alt-text.org/callback",
-        scopes: ["tweet.read", "users.read", "offline.access"],
+        scopes: ["tweet.read", "users.read"],
     });
 
     const tokenWrapper = await myClient.requestAccessToken(code);
