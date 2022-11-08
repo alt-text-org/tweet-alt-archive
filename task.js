@@ -30,6 +30,7 @@ if (uuid) {
         .catch(async err => {
             console.log(err)
             await error(`Task failed: ${err}`, uuid)
+            process.exit(1)
         });
 } else {
     error("Internal error, task was not invoked correctly", uuid).catch()
@@ -37,6 +38,9 @@ if (uuid) {
 
 async function task(config, uuid, token, tweets) {
     const twtr = await makeTwitterClient(config, token);
+    await twtr.users.findMyUser().then(resp => {
+        console.log(resp)
+    })
 
     const alt = [];
     for (let i = 0; i < tweets.length; i += 100) {
