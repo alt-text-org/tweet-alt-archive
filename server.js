@@ -108,7 +108,6 @@ const signupCallbackOpts = {
 };
 fastify.get("/callback", signupCallbackOpts);
 
-
 const uploadOpts = {
     schema: {
         body: {

@@ -50,7 +50,7 @@ async function task(config, uuid, token, tweets) {
         }
     }
 
-    saveToGcs(`archive/${uuid}/result.json`, alt);
+    await saveToGcs(`archive/${uuid}/result.json`, alt);
 }
 
 async function getTweets(twtr, tweetIds) {
@@ -100,36 +100,39 @@ async function tryGetTweets(twtr, tweetIds) {
 }
 
 function saveToGcs(path, contents) {
-    if (typeof contents !== "object") {
-        contents = JSON.stringify(contents);
-    }
+    return new Promise((resolve, reject) => {
+        if (typeof contents !== "object") {
+            contents = JSON.stringify(contents);
+        }
 
-    const gcs = new Storage({
-        projectId: "alt-text-org",
-        keyFilename: config.gcs_token
-    });
+        const gcs = new Storage({
+            projectId: "alt-text-org",
+            keyFilename: config.gcs_token
+        });
 
-    const bucket = gcs.bucket("download.alt-text.org");
-    const file = bucket.file(path);
+        const bucket = gcs.bucket("download.alt-text.org");
+        const file = bucket.file(path);
 
-    const bufferStream = new stream.PassThrough();
-    bufferStream.end(Buffer.from(contents));
-    bufferStream.pipe(file.createWriteStream({
-        metadata: {
-            contentType: 'application/json',
-        },
-        validation: "md5"
-    })).on('error', function (err) {
-        console.log(err)
-    }).on('finish', function () {
-        console.log(`Finished uploading file: '${path}'`)
-    });
-}
+        const bufferStream = new stream.PassThrough();
+        bufferStream.end(Buffer.from(contents));
+        bufferStream.pipe(file.createWriteStream({
+            metadata: {
+                contentType: 'application/json',
+            },
+            validation: "md5"
+        })).on('error', function (err) {
+            reject(err)
+        }).on('finish', function () {
+            console.log(`Finished uploading file: '${path}'`)
+            resolve(true)
+        });
+
+    })}
 
 async function makeTwitterClient(token) {
     return new Client(new auth.OAuth2Bearer(token))
 }
 
 async function error(msg, uuid) {
-    saveToGcs(`archive/${uuid}/error.json`, msg)
+    await saveToGcs(`archive/${uuid}/error.json`, msg)
 }
