@@ -11,12 +11,10 @@ console.log(`Got task with UUID: '${uuid}'`)
 const config = {
     gcs_token: process.env.GCS_TOKEN,
     twitter: {
-        client_id: process.env.CLIENT_ID,
-        client_secret: process.env.CLIENT_SECRET
+        client_id: process.env.TWITTER_CLIENT_ID,
+        client_secret: process.env.TWITTER_CLIENT_SECRET
     }
 }
-
-console.log(`Launching task with configs: ${JSON.stringify(config)}`)
 
 if (uuid) {
     try {
@@ -121,7 +119,6 @@ function saveToGcs(path, contents) {
         metadata: {
             contentType: 'application/json',
         },
-        public: true,
         validation: "md5"
     })).on('error', function (err) {
         console.log(err)
