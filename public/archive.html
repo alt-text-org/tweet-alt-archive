@@ -20,7 +20,8 @@
         }
 
         function handleFile(fileContents) {
-            const [_, json] = fileContents.split("=", 2);
+            const firstEq = fileContents.indexOf("=");
+            const json = fileContents.slice(firstEq + 1)
             if (!json) {
                 throw new Error(`Failed to load contents for tweets.js`)
             }
@@ -42,12 +43,7 @@
         }
 
         async function handleZip(zip) {
-            const promises = []
-            zip.folder("tweets").forEach(file => {
-                promises.push(file.async("string").then(str => handleFile(str)))
-            })
-
-            return (await Promise.all(promises)).flatMap(a => a)
+            return await zip.file("data/tweets.js").async("string").then(handleFile)
         }
 
         async function extractTweetIds(file) {
@@ -89,10 +85,10 @@
                                 alert("Malformed response from server, please alert @HBeckPDX");
                             }
 
-                            window.location.query=`uuid=${uuid}`;
-                            window.location.pathname="/download";
+                            window.location.query = `uuid=${uuid}`;
+                            window.location.pathname = "/download";
                         } else {
-                            alert(`Upload failed with status: ${resp.statusCode}, please alert @HBeckPDX`)
+                            alert(`Upload failed with status: ${resp.status}, please alert @HBeckPDX`)
                         }
                     })
                 }
@@ -159,8 +155,10 @@
     <div id="upload-wrapper">
         <form>
             <label for="file-upload">Archive:&nbsp;</label>
-            <input type="file" id="file-upload" name="file-upload" accept="application/zip" onchange="fileSelected()"><br/>
-            <button id="submit-button" class="button" type="button" onclick="submitArchive()" disabled>Gather Alt Text</button>
+            <input type="file" id="file-upload" name="file-upload" accept="application/zip"
+                   onchange="fileSelected()"><br/>
+            <button id="submit-button" class="button" type="button" onclick="submitArchive()" disabled>Gather Alt Text
+            </button>
         </form>
     </div>
 </div>

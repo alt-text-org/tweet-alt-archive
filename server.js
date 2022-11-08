@@ -1,7 +1,7 @@
 const path = require('path')
 const crypto = require("crypto");
 
-const fastify = require('fastify')({logger: true});
+const fastify = require('fastify')({logger: false});
 const {auth} = require("twitter-api-sdk");
 const {v4} = require("uuid")
 const fs = require("fs");
@@ -9,8 +9,8 @@ const child_process = require("child_process");
 
 fastify.register(require('@fastify/static'), {
     root: path.join(__dirname, 'public'),
-    prefix: '/public/',
-})
+    prefix: '/public/'
+});
 
 const config = {
     twitter: {
@@ -18,11 +18,12 @@ const config = {
         client_secret: process.env.TWITTER_CLIENT_SECRET
     }
 }
+
 const twtr = new auth.OAuth2User({
     client_id: config.twitter.client_id,
     client_secret: config.twitter.client_secret,
     callback: "https://archive.alt-text.org/callback",
-    scopes: ["tweet.read", "users.read", "offline.access"],
+    scopes: ["tweet.read", "users.read"],
 });
 
 fastify.get("/", function (request, reply) {
