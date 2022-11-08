@@ -16,6 +16,8 @@ const config = {
     }
 }
 
+console.log(`Launching task with configs: ${JSON.stringify(config)}`)
+
 if (uuid) {
     try {
         parse(uuid)
@@ -124,7 +126,7 @@ function saveToGcs(path, contents) {
     })).on('error', function (err) {
         console.log(err)
     }).on('finish', function () {
-        file.makePublic()
+        console.log(`Finished uploading file: '${path}'`)
     });
 }
 
