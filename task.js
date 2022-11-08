@@ -50,7 +50,7 @@ async function task(config, uuid, token, tweets) {
         }
     }
 
-    await saveToGcs(`archive/${uuid}/result.json`, alt);
+    await saveToGcs(`archive/${uuid}/result.json`, JSON.stringify(alt));
 }
 
 async function getTweets(twtr, tweetIds) {
