@@ -134,5 +134,5 @@ async function makeTwitterClient(token) {
 }
 
 async function error(msg, uuid) {
-    await saveToGcs(`archive/${uuid}/error.json`, msg)
+    await saveToGcs(`archive/${uuid}/error.json`, JSON.stringify({error: msg}))
 }
