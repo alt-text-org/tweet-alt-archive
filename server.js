@@ -148,7 +148,7 @@ const uploadOpts = {
             tweet_ids
         }));
 
-        const child = child_process.spawn(`node task.js ${uuid}`);
+        const child = child_process.spawn("/home/hannah/.nvm/versions/node/v16.18.1/bin/node", ["./task.js", uuid]);
         child.stdout.on("data", data => {
             console.log(`${uuid}: ${data}`);
         });

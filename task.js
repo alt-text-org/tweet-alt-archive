@@ -6,6 +6,7 @@ const {parse} = require("uuid")
 
 const args = process.argv.slice(2);
 const [uuid] = args
+console.log(`Got task with UUID: '${uuid}'`)
 
 const config = {
     gcs_token: process.env.GCS_TOKEN,
