@@ -37,7 +37,7 @@ if (uuid) {
 }
 
 async function task(config, uuid, token, tweets) {
-    const twtr = await makeTwitterClient(config, token);
+    const twtr = await makeTwitterClient(token);
     await twtr.users.findMyUser().then(resp => {
         console.log(resp)
     })
