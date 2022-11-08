@@ -26,7 +26,7 @@ if (uuid) {
     }
 
     let taskFile = `./in-progress/${uuid}.json`;
-    let taskDef = fs.readFileSync(taskFile).toJSON();
+    let taskDef = JSON.parse(fs.readFileSync(taskFile, "utf8"))
     console.log(taskDef)
     console.log(`Launching with code '${taskDef.code}' for ${taskDef.tweet_ids.length} tweets`)
 
