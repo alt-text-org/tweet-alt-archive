@@ -88,8 +88,7 @@
                                 alert("Malformed response from server, please alert @HBeckPDX");
                             }
 
-                            window.location.search = `?uuid=${uuid}`;
-                            window.location.pathname = "/download";
+                            window.location = `${location.protocol}//${location.hostname}/download?uuid=${uuid}`;
                         } else {
                             alert(`Upload failed with status: ${resp.status}, please alert @HBeckPDX`)
                         }
