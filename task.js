@@ -18,7 +18,7 @@ if (uuid) {
     } catch (err) {
         console.log(`Couldn't parse UUID: '${uuid}'`)
         console.log(err);
-        return
+        process.exit(1)
     }
 
     let taskFile = `./in-progress/${uuid}.json`;
