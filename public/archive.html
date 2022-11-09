@@ -90,7 +90,7 @@
 
                             window.location = `${location.protocol}//${location.hostname}/download?uuid=${uuid}`;
                         } else {
-                            alert(`Upload failed with status: ${resp.status}, please alert @HBeckPDX`)
+                            alert(`Upload failed with status: ${resp.status}: detail: '${await resp.text()}', please alert @HBeckPDX`)
                         }
                     })
                 }
