@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <title>Alt Text Archiver</title>
     <style>
+        body {
+            font-size: 2rem;
+        }
+
         #wait-wrapper {
             margin: 0 30vw;
             grid-area: c;
@@ -65,7 +69,8 @@
             }).then(async resp => {
                 if (resp.ok) {
                     downloadWrapper.innerHTML =
-                        `Your archive is ready!<br>Download it <i><b><a href="${resultUrl}">Here</a></b></i><br/>` +
+                        `Your archive is ready! Download it here:<br/><i><b><a href="${resultUrl}">${resultUrl}</a></b></i><br/><br/>` +
+                        `Basic search though your downloaded results can be accessed at <a href="/search">archive.alt-text.org/search</a><br/><br/>` +
                         `This project costs a bit to run. If you're able, your support on <a href="https://ko-fi.com/hbeck">Ko-fi</a> is so appreciated`;
                     waitWrapper.style.display = "none";
                     downloadWrapper.style.display = "block";
@@ -88,7 +93,7 @@
         pollHandle = setInterval(poll(uuid), 10000);
     } else {
         errorWrapper.innerText =
-            "Hmm, you're missing a query parameter. Unfortunately without them there's not much to be done.";
+            "Hmm, you're missing a query parameter. Unfortunately without it there's not much to be done.";
         waitWrapper.style.display = "none";
         errorWrapper.style.display = "block";
     }
