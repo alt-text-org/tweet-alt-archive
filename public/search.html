@@ -7,12 +7,33 @@
 
     </style>
     <script>
+        let texts = []
+        const fileSelected = () => {
+            const fileInput = document.getElementById("file-upload")
+            if (fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.readAsText(fileInput.files[0], "utf8");
 
+                reader.onload = function (evt) {
+                    // evt.target.result
+                }
+
+                reader.onerror = function () {
+                }
+            }
+        }
     </script>
     <link rel="stylesheet" type="text/css" href="common.css">
 </head>
 <body>
-<div id="upload-prompt">
+<div id="upload-wrapper">
+    <form>
+        <label for="file-upload">Alt Text:&nbsp;</label>
+        <input type="file" id="file-upload" name="file-upload" accept=".json"
+               onchange="fileSelected()"><br/>
+    </form>
+</div>
+<div id="error-wrapper">
 
 </div>
 <div id="search-wrapper">
