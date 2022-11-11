@@ -34,7 +34,6 @@ fastify.get("/src/jszip.min.js", function (request, reply) {
     reply.sendFile("src/jszip.min.js")
 })
 
-
 fastify.get("/", function (request, reply) {
     reply.sendFile("index.html")
 });
@@ -46,6 +45,11 @@ fastify.get("/archive", function (request, reply) {
 fastify.get("/download", function (request, reply) {
     reply.sendFile("download.html")
 });
+
+fastify.get("/search", function (request, reply) {
+    reply.sendFile("search.html")
+});
+
 
 fastify.get("/health", function (request, reply) {
     reply.status(200).send()

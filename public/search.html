@@ -4,10 +4,50 @@
     <meta charset="UTF-8">
     <title>Alt Text Archive</title>
     <style>
+        body {
+            font-size: 2rem;
+        }
 
+        #upload-wrapper {
+            grid-area: c;
+            place-self: center;
+        }
+
+        #file-upload {
+            font-size: 2rem;
+            border-radius: 10px;
+            border: 2px solid black;
+        }
+
+        #error-wrapper {
+            grid-area: c;
+            place-self: center;
+            display: none;
+        }
+
+        #search-wrapper {
+            grid-area: c;
+            justify-self: left;
+            align-self: start;
+            display: none;
+            margin: 20px;
+        }
+
+        #search-bar-wrapper {
+            width: 100%;
+        }
+
+        #search {
+            width: 90vw
+        }
+
+        .result {
+            padding: 10px;
+        }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
     <script>
-        let texts = []
+        let fuse = null
         const fileSelected = () => {
             const fileInput = document.getElementById("file-upload")
             if (fileInput.files && fileInput.files[0]) {
@@ -15,12 +55,66 @@
                 reader.readAsText(fileInput.files[0], "utf8");
 
                 reader.onload = function (evt) {
-                    // evt.target.result
+                    fuse = parseTexts(evt.target.result);
+                    if (fuse) {
+                        const uploadWrapper = document.getElementById("upload-wrapper");
+                        const searchWrapper = document.getElementById("search-wrapper");
+                        uploadWrapper.style.display = "none";
+                        searchWrapper.style.display = "block"
+                    }
                 }
 
                 reader.onerror = function () {
+                    raiseError("Couldn't read file.")
                 }
             }
+        }
+
+        const searchUpdated = () => {
+            const search = document.getElementById("search")
+            const searchResults = document.getElementById("search-results")
+            const results = fuse.search(search.value, {limit: 10})
+            const elements = results.map((result, idx) => buildResult(result, idx))
+            searchResults.replaceChildren(...elements)
+        }
+
+        function buildResult(result, idx) {
+            const wrapper = document.createElement("div")
+            wrapper.innerText = result.item.alt_text
+            wrapper.className = "result"
+
+            if (idx % 2 === 0) {
+                wrapper.style.backgroundColor = "rgba(220, 190, 135, 0.4)"
+            }
+
+            return wrapper;
+        }
+
+        function parseTexts(raw) {
+            const parsed = JSON.parse(raw);
+            if (!parsed) {
+                raiseError("Couldn't parse file.")
+                return null
+            }
+
+            const options = {keys: ['tweet_id', 'media_key', 'media_url', 'alt_text']}
+            return new Fuse(parsed, options)
+        }
+
+        function backToUpload() {
+            const uploadWrapper = document.getElementById("upload-wrapper")
+            const errorWrapper = document.getElementById("error-wrapper")
+            errorWrapper.style.display = "none"
+            uploadWrapper.style.display = "block"
+        }
+
+        function raiseError(err) {
+            const uploadWrapper = document.getElementById("upload-wrapper")
+            const errorWrapper = document.getElementById("error-wrapper")
+            const errorText = document.getElementById("error-text")
+            errorText.innerText = err
+            uploadWrapper.style.display = "none"
+            errorWrapper.style.display = "block"
         }
     </script>
     <link rel="stylesheet" type="text/css" href="common.css">
@@ -28,16 +122,30 @@
 <body>
 <div id="upload-wrapper">
     <form>
-        <label for="file-upload">Alt Text:&nbsp;</label>
+        <label for="file-upload">Alt Text File:&nbsp;</label>
         <input type="file" id="file-upload" name="file-upload" accept=".json"
                onchange="fileSelected()"><br/>
     </form>
 </div>
 <div id="error-wrapper">
-
+    <div>There was an error processing the file you provided:</div>
+    <div id="error-text"></div>
+    <div>
+        <button onclick="backToUpload()">Back</button>
+    </div>
 </div>
 <div id="search-wrapper">
+    <div id="search-bar-wrapper">
+        <label for="search">Search:</label>
+        <input id="search"
+               name="search"
+               type="search"
+               placeholder="Words, image urls, tweet ids, or media keys"
+               onkeyup="searchUpdated()">
+    </div>
+    <div id="search-results">
 
+    </div>
 </div>
 </body>
 </html>
