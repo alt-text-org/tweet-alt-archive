@@ -5,6 +5,7 @@ body {
     font-family: "Helvetica", sans-serif;
     color: black;
     background-color: white;
+    min-height: 100vh;
 }
 
 a {
