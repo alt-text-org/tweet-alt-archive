@@ -79,6 +79,12 @@
         }
 
         async function submitArchive() {
+            const submitButton = document.getElementById("submit-button")
+            submitButton.disabled = true;
+
+            const loadingAnim = document.getElementById("loading-spin")
+            loadingAnim.style.visibility = "inherit"
+
             const query = new URLSearchParams(window.location.search);
             const code = query.get('code');
 
@@ -123,6 +129,20 @@
             grid-area: c;
             place-self: center;
             margin: 0 20vw;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .break {
+            height: 0;
+            flex-basis: 100%;
+        }
+
+        #loading-spin {
+            width: 75px;
+            height: 75px;
+            visibility: hidden;
         }
 
         #explanation {
@@ -172,6 +192,10 @@
     <a href="https://hbeck.dev" target="_blank">💜 HBeck</a>
 </div>
 <div id="wrapper">
+    <div>
+        <img id="loading-spin" src="img/loading.svg" aria-hidden="true" alt="A loading animation"/>
+    </div>
+    <div class="break"></div>
     <div id="explanation">
         Select the zip file containing your archive or tweets.js from the unzipped <i>data</i> folder. If your zipped
         archive is larger than about 2.4GB you'll need to upload the .js file. Pressing "Gather Alt Text" will kick off

@@ -34,6 +34,10 @@ fastify.get("/src/jszip.min.js", function (request, reply) {
     reply.sendFile("src/jszip.min.js")
 })
 
+fastify.get("/img/loading.svg", function (request, reply) {
+    reply.sendFile("img/loading.svg")
+})
+
 fastify.get("/", function (request, reply) {
     reply.sendFile("index.html")
 });

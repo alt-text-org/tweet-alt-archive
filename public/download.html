@@ -14,6 +14,19 @@
             place-self: center;
             text-align: center;
             font-weight: 600;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .break {
+            height: 0;
+            flex-basis: 100%;
+        }
+
+        #loading-spin {
+            width: 75px;
+            height: 75px;
         }
 
         #download-wrapper {
@@ -46,9 +59,15 @@
     <a href="https://hbeck.dev" target="_blank">💜 HBeck</a>
 </div>
 <div id="wait-wrapper">
-    Your alt text is being collected. You don't have to stay on this page, but be sure to save the address. When your
-    archive is collected, this page will present a link to download it. If the archiver fails for some reason, it should
-    let you know here. If it's been more than 2 hours and you can still see this, please try again.
+    <div>
+        <img id="loading-spin" src="img/loading.svg" aria-hidden="true" alt="A loading animation"/>
+    </div>
+    <div class="break"></div>
+    <div>
+        Your alt text is being collected. You don't have to stay on this page, but be sure to save the address. When your
+        archive is collected, this page will present a link to download it. If the archiver fails for some reason, it should
+        let you know here. If it's been more than 2 hours and you can still see this, please try again.
+    </div>
 </div>
 <div id="download-wrapper"></div>
 <div id="error-wrapper"></div>
