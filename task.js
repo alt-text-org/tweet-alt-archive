@@ -23,10 +23,8 @@ if (uuid) {
 
     let taskFile = `./in-progress/${uuid}.json`;
     let taskDef = JSON.parse(fs.readFileSync(taskFile, "utf8"))
+    fs.rmSync(taskFile)
     task(config, uuid, taskDef.token, taskDef.tweet_ids)
-        .then(() => {
-            fs.rmSync(taskFile)
-        })
         .catch(async err => {
             console.log(err)
             await error(`Task failed: ${err}`, uuid)
