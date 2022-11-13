@@ -131,10 +131,13 @@
                     }).then(uuid => {
                         if (uuid) {
                             window.location = `${location.protocol}//${location.hostname}/download?uuid=${uuid}`;
+                        } else {
+                            window.location = `${location.protocol}//${location.hostname}/`;
                         }
                     }).catch(err => {
                         console.log(err)
-                        alert("Error during tweet id extraction, please reach out to @HBeckPDX")
+                        alert("Error during tweet id extraction, please reach out to @HBeckPDX.")
+                        window.location = `${location.protocol}//${location.hostname}/`;
                     })
             } else {
                 console.log("No file found!");
