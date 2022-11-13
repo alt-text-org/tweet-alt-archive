@@ -1,7 +1,7 @@
 const path = require('path')
 const crypto = require("crypto");
 
-const fastify = require('fastify')({logger: true});
+const fastify = require('fastify')({logger: false});
 const {auth} = require("twitter-api-sdk");
 const {v4} = require("uuid")
 const fs = require("fs");
@@ -148,13 +148,22 @@ const uploadOpts = {
 
         const uuid = v4();
 
-        const tokenWrapper = await twtr.requestAccessToken(code);
+        const tokenWrapper = await twtr.requestAccessToken(code)
+            .catch(err => {
+                console.log(err)
+                return null;
+            });
+
         let token = null;
-        if (tokenWrapper && tokenWrapper.token && tokenWrapper.token.access_token) {
-            token = tokenWrapper.token.access_token
+        if (tokenWrapper) {
+            if (tokenWrapper.token && tokenWrapper.token.access_token) {
+                token = tokenWrapper.token.access_token
+            } else {
+                reply.status(500).send({error: "Malformed token from Twitter"})
+                return
+            }
         } else {
-            reply.status(500).send({error: "Couldn't get token from Twitter"})
-            return
+            reply.status(400).send({error: "Twitter code too old"})
         }
 
         let file = `./in-progress/${uuid}.json`;
