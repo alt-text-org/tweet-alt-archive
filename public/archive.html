@@ -94,8 +94,10 @@
                     .then(async tweetIds => {
                         if (!tweetIds) {
                             alert("Failed to extract tweet ids. Please reach out to @HBeckPDX.")
+                            return null
                         } else if (tweetIds.length === 0) {
                             alert("No tweets with images found")
+                            return null
                         } else {
                             return await fetch("/api/upload", {
                                 method: "POST",
@@ -119,6 +121,11 @@
                                     alert(`Upload failed, please reach out to @HBeckPDX`)
                                     return null
                                 }
+                            }).catch(err => {
+                                console.log(`Upload failed.`)
+                                console.log(err)
+                                alert(`Upload failed, please reach out to @HBeckPDX`)
+                                return null
                             })
                         }
                     }).then(uuid => {
