@@ -90,34 +90,45 @@
 
             const filePicker = document.getElementById("file-upload");
             if (filePicker.files && filePicker.files[0]) {
-                const tweetIds = await extractTweetIds(filePicker.files[0])
-                if (!tweetIds) {
-                    alert("Failed to extract tweet ids. Check console logs for error and reach out to @HBeckPDX.")
-                } else if (tweetIds.length === 0) {
-                    alert("No tweets with images found")
-                } else {
-                    fetch("/api/upload", {
-                        method: "POST",
-                        body: JSON.stringify({
-                            code,
-                            tweet_ids: tweetIds
-                        }),
-                        headers: {
-                            "Content-Type": "application/json"
-                        }
-                    }).then(async resp => {
-                        if (resp.ok) {
-                            const {uuid} = await resp.json();
-                            if (!uuid) {
-                                alert("Malformed response from server, please alert @HBeckPDX");
-                            }
-
-                            window.location = `${location.protocol}//${location.hostname}/download?uuid=${uuid}`;
+                extractTweetIds(filePicker.files[0])
+                    .then(async tweetIds => {
+                        if (!tweetIds) {
+                            alert("Failed to extract tweet ids. Please reach out to @HBeckPDX.")
+                        } else if (tweetIds.length === 0) {
+                            alert("No tweets with images found")
                         } else {
-                            alert(`Upload failed with status: ${resp.status}: detail: '${await resp.text()}', please alert @HBeckPDX`)
+                            return await fetch("/api/upload", {
+                                method: "POST",
+                                body: JSON.stringify({
+                                    code,
+                                    tweet_ids: tweetIds
+                                }),
+                                headers: {
+                                    "Content-Type": "application/json"
+                                }
+                            }).then(async resp => {
+                                if (resp.ok) {
+                                    const {uuid} = await resp.json();
+                                    if (!uuid) {
+                                        alert("Malformed response from server, please reach out to @HBeckPDX");
+                                        return null
+                                    }
+                                    return uuid
+                                } else {
+                                    console.log(`Upload failed. Status: ${resp.status} Body: ${await resp.text()}`)
+                                    alert(`Upload failed, please reach out to @HBeckPDX`)
+                                    return null
+                                }
+                            })
                         }
+                    }).then(uuid => {
+                        if (uuid) {
+                            window.location = `${location.protocol}//${location.hostname}/download?uuid=${uuid}`;
+                        }
+                    }).catch(err => {
+                        console.log(err)
+                        alert("Error during tweet id extraction, please reach out to @HBeckPDX")
                     })
-                }
             } else {
                 console.log("No file found!");
             }
