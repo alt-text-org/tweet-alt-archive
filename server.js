@@ -1,7 +1,7 @@
 const path = require('path')
 const crypto = require("crypto");
 
-const fastify = require('fastify')({logger: false});
+const fastify = require('fastify')({logger: true});
 const {auth} = require("twitter-api-sdk");
 const {v4} = require("uuid")
 const fs = require("fs");
