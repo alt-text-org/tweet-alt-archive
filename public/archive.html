@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Alt Text Archiver</title>
     <script src="src/jszip.min.js"></script>
+    <script src="src/oboe-browser.min.js"></script>
     <script>
         function extractTweetId(tweetWrapper) {
             if (tweetWrapper.tweet && tweetWrapper.tweet.extended_entities && tweetWrapper.tweet.extended_entities.media) {
@@ -19,27 +20,32 @@
             }
         }
 
-        function handleFile(fileContents) {
+        async function handleFile(fileContents) {
             const firstEq = fileContents.indexOf("=");
             const json = fileContents.slice(firstEq + 1)
             if (!json) {
                 throw new Error(`Failed to load contents for tweets.js`)
             }
 
-            const parsed = JSON.parse(json);
-            if (!parsed) {
-                throw new Error(`Failed to parse contents for tweets.js`)
-            }
+            const blob = new Blob([json])
+            const url = URL.createObjectURL(blob)
 
-            const tweetIds = []
-            parsed.forEach(tweet => {
-                const tweetId = extractTweetId(tweet);
-                if (tweetId) {
-                    tweetIds.push(tweetId)
-                }
+            return new Promise((resolve, reject) => {
+                const tweetIds = []
+                oboe(url)
+                    .node("!.*", function (wrapper) {
+                        const tweetId = extractTweetId(wrapper);
+                        if (tweetId) {
+                            tweetIds.push(tweetId)
+                        }
+                    })
+                    .done(() => {
+                        resolve(tweetIds)
+                    })
+                    .fail(() => {
+                        reject("File read failed")
+                    })
             })
-
-            return tweetIds;
         }
 
         async function handleZip(zip) {
